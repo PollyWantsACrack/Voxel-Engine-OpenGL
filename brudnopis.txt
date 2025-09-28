@@ -138,3 +138,40 @@
 	zamiana z : glbuffersubdata...(wina lezala w tym ze wierhcolki s e nie w peolni aktualizowaly ) na glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
 	3. dlaczego kiedy bylen na szczycie kolumny i chcialem tam postawic blok to sie nie stawiał:
 	przeniesieni generownai srodkow szescianu na poczatek petli generate vertices -- nie dlao sie stawiac poniewaz szesciany z warotscia 0 byly z gory pomijane przze progrma wiec ich srodki nie zostaly wygenerownae
+
+
+	void updateVectorKey(KeyDirection dir, Chunk* chunk)
+	{
+		SKONCYELM TU Z JAKIMIS DZIENWYMI BLEDAMI
+		switch (dir)
+		{
+		case W:
+		{
+			bool validPos = true;
+			for (int i = 0; i < chunk->blocks.size(); i++)
+			{
+
+
+
+				if (
+					(chunk->blocks[i].cubeCenter.x - 0.5f > cameraPos.x && chunk->blocks[i].cubeCenter.x + 0.5f < cameraPos.x) &&
+					(chunk->blocks[i].cubeCenter.y - 0.5f > cameraPos.y && chunk->blocks[i].cubeCenter.y + 0.5f < cameraPos.y) &&
+					(chunk->blocks[i].cubeCenter.z - 0.5f > cameraPos.z && chunk->blocks[i].cubeCenter.z + 0.5f < cameraPos.z)
+					)
+				{
+					validPos = false;
+				}
+				
+
+			}
+			if (!validPos)
+			{
+				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+				break;
+			}
+			else {
+				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+				break;
+			}
+		}
+			

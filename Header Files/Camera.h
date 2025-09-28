@@ -63,41 +63,11 @@ public:
 	}
 	void updateVectorKey(KeyDirection dir, Chunk* chunk)
 	{
-		SKONCYELM TU Z JAKIMIS DZIENWYMI BLEDAMI
 		switch (dir)
 		{
 		case W:
-		{
-			bool validPos = true;
-			for (int i = 0; i < chunk->blocks.size(); i++)
-			{
-
-
-
-				if (
-					(chunk->blocks[i].cubeCenter.x - 0.5f > cameraPos.x && chunk->blocks[i].cubeCenter.x + 0.5f < cameraPos.x) &&
-					(chunk->blocks[i].cubeCenter.y - 0.5f > cameraPos.y && chunk->blocks[i].cubeCenter.y + 0.5f < cameraPos.y) &&
-					(chunk->blocks[i].cubeCenter.z - 0.5f > cameraPos.z && chunk->blocks[i].cubeCenter.z + 0.5f < cameraPos.z)
-					)
-				{
-					validPos = false;
-				}
-				
-
-			}
-			if (!validPos)
-			{
-				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
-				break;
-			}
-			else {
-				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
-				break;
-			}
-		}
-			
-
-			
+			cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+			break;		
 		case S:
 			cameraPos -= cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
 			break;
