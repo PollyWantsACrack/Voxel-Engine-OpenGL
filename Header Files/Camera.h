@@ -11,7 +11,9 @@
 #include <iostream>
 #include "Shader.h"
 #include <vector>
+#include "Chunk.h"
 class Chunk;
+
 class Camera
 {
 private:
@@ -20,6 +22,7 @@ private:
 	float pitch{ 0.0f };
 	float sens = 0.05f;
 	float cameraSpeed = 0.1f;
+	char lastNull = 'x';
 
 	double lastXpos{};
 	double lastYpos{};
@@ -61,37 +64,8 @@ public:
 	{
 		cameraPos.x = x;
 	}
-	void updateVectorKey(KeyDirection dir, Chunk* chunk)
-	{
-		switch (dir)
-		{
-		case W:
-			cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
-			break;		
-		case S:
-			cameraPos -= cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
-			break;
-		case A:
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -cameraSpeed;
-			break;
-		case D:
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-			break;
-		case SPACE:
-			cameraPos += cameraSpeed * glm::vec3(0.0f,1.0f,0.0f);
-			break;
-		case LSHIFT:
-			cameraPos -= cameraSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
-			break;
-		case KEY_2:
-			cameraSpeed *= 1.1;
-			break;
-		case KEY_3:
-			cameraSpeed /= 1.1;
-			break;
-
-		}
-	}
+	void updateVectorKey(KeyDirection dir, Chunk* chunk);
+	
 
 	void updateVectorMouse(double xpos, double ypos)
 	{
@@ -129,4 +103,97 @@ public:
 	}
 
 };
+void Camera::updateVectorKey(KeyDirection dir, Chunk* chunk)
+{
+	switch (dir)
+	{
+
+	case W:
+	{
+		glm::vec3 newPos = cameraPos;
+		glm::vec3 predictedPositionX = cameraPos + cameraSpeed * glm::vec3(cameraFront.x, 0, 0);
+		glm::vec3 predictedPositionY = cameraPos + cameraSpeed * glm::vec3(0, cameraFront.y, 0);
+		glm::vec3 predictedPositionZ = cameraPos + cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+		bool collisionX = false;
+		bool collisionY = false;
+		bool collisionZ = false;
+		for (int i = 0; i < chunk->blocks.size(); i++)
+		{
+			if (chunk->blocks.at(i).blockType == 0)
+			{
+				continue;
+			}
+			
+			
+			if (
+				(predictedPositionX.x > chunk->blocks[i].cubeCenter.x - 0.5f && predictedPositionX.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+				(predictedPositionX.y > chunk->blocks[i].cubeCenter.y - 0.5f && predictedPositionX.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+				(predictedPositionX.z > chunk->blocks[i].cubeCenter.z - 0.5f && predictedPositionX.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+				)
+			{
+				collisionX = true;
+				newPos = cameraPos;
+			}
+			else if(!collisionX){
+				newPos.x = predictedPositionX.x;
+				
+			}
+			if (
+				(predictedPositionY.x > chunk->blocks[i].cubeCenter.x - 0.5f && predictedPositionY.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+				(predictedPositionY.y > chunk->blocks[i].cubeCenter.y - 0.5f && predictedPositionY.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+				(predictedPositionY.z > chunk->blocks[i].cubeCenter.z - 0.5f && predictedPositionY.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+				)
+			{
+				collisionY = true;
+				newPos = cameraPos;
+			}
+			else if(!collisionY){
+				newPos.y = predictedPositionY.y;
+				
+			}
+			if (
+				(predictedPositionZ.x > chunk->blocks[i].cubeCenter.x - 0.5f && predictedPositionZ.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+				(predictedPositionZ.y > chunk->blocks[i].cubeCenter.y - 0.5f && predictedPositionZ.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+				(predictedPositionZ.z > chunk->blocks[i].cubeCenter.z - 0.5f && predictedPositionZ.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+				)
+			{
+				collisionZ = true;
+				newPos = cameraPos;
+			}
+			else if(!collisionZ){
+				newPos.z = predictedPositionZ.z;
+				
+			}
+						
+		}
+		
+		cameraPos = newPos;
+		break;
+		
+	}
+
+	case S:
+		cameraPos -= cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+		break;
+	case A:
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -cameraSpeed;
+		break;
+	case D:
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		break;
+	case SPACE:
+		cameraPos += cameraSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
+		break;
+	case LSHIFT:
+		cameraPos -= cameraSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
+		break;
+	case KEY_2:
+		cameraSpeed *= 1.1;
+		break;
+	case KEY_3:
+		cameraSpeed /= 1.1;
+		break;
+
+	}
+}
 #endif 

@@ -1,0 +1,397 @@
+	void updateVectorKey(KeyDirection dir, Chunk* chunk)
+	{
+		SKONCYELM TU Z JAKIMIS DZIENWYMI BLEDAMI
+		switch (dir)
+		{
+		case W:
+		{
+			bool validPos = true;
+			for (int i = 0; i < chunk->blocks.size(); i++)
+			{
+
+
+
+				if (
+					(chunk->blocks[i].cubeCenter.x - 0.5f > cameraPos.x && chunk->blocks[i].cubeCenter.x + 0.5f < cameraPos.x) &&
+					(chunk->blocks[i].cubeCenter.y - 0.5f > cameraPos.y && chunk->blocks[i].cubeCenter.y + 0.5f < cameraPos.y) &&
+					(chunk->blocks[i].cubeCenter.z - 0.5f > cameraPos.z && chunk->blocks[i].cubeCenter.z + 0.5f < cameraPos.z)
+					)
+				{
+					validPos = false;
+				}
+				
+
+			}
+			if (!validPos)
+			{
+				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+				break;
+			}
+			else {
+				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+				break;
+			}
+		}
+			
+
+
+
+
+
+
+			case W:
+			if ((cameraPos+ cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z)).x < 0)
+			{
+				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+				break;
+			}
+			else {
+				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+				break;
+			}		
+
+
+
+
+
+
+
+
+
+			case W:
+	{
+		int x = 1;
+		int y = 1;
+		int z = 1;
+		bool validPos = true;
+		for (int i = 0; i < chunk->blocks.size(); i++)
+		{
+			if (chunk->blocks.at(i).blockType == 0)
+			{
+				continue;
+			}
+
+
+			if (
+				(cameraPos.x > chunk->blocks[i].cubeCenter.x - 0.5f  && cameraPos.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+				(cameraPos.y > chunk->blocks[i].cubeCenter.y - 0.5f && cameraPos.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+				(cameraPos.z > chunk->blocks[i].cubeCenter.z - 0.5f && cameraPos.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+				)
+			{
+				validPos = false;
+			}
+
+			
+			
+
+			
+
+
+		}
+		std::cout << validPos;
+		if (!validPos)
+		{
+			cameraPos += cameraSpeed * glm::vec3(0, 0, 0);
+			break;
+		}
+		else {
+			cameraPos += cameraSpeed * glm::vec3(cameraFront.x*x, cameraFront.y*y, cameraFront.z*z);
+			break;
+		}
+	}
+
+
+
+
+	case W:
+	{
+		int x = 1;
+		int y = 1;
+		int z = 1;
+		bool validPos = true;
+		for (int i = 0; i < chunk->blocks.size(); i++)
+		{
+			if (chunk->blocks.at(i).blockType == 0)
+			{
+				continue;
+			}
+
+
+			if ((cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).x > chunk->blocks[i].cubeCenter.x - 0.5f && (cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).x < chunk->blocks[i].cubeCenter.x + 0.5f)
+			{
+				x = 0;
+			}
+			if ((cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).y > chunk->blocks[i].cubeCenter.y - 0.5f && (cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).y < chunk->blocks[i].cubeCenter.y + 0.5f)
+			{
+				y = 0;
+			}
+			if ((cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).z > chunk->blocks[i].cubeCenter.z - 0.5f && (cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z)).z < chunk->blocks[i].cubeCenter.z + 0.5f)
+			{
+				z = 0;
+			}
+			
+		}
+		cameraPos += cameraSpeed * glm::vec3(cameraFront.x*x, cameraFront.y*y, cameraFront.z*z);
+		break;
+		
+	}
+
+
+
+
+
+
+
+
+	case W:
+	{
+		bool validPosX = true;
+		bool validPosY = true;
+		bool validPosZ = true;
+		bool validPos = true;
+		int x = 1;
+		int y = 1;
+		int z = 1;
+		for (int i = 0; i < chunk->blocks.size(); i++)
+		{
+			if (chunk->blocks.at(i).blockType == 0)
+			{
+				continue;
+			}
+			glm::vec3 predictedPosition = cameraPos + cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z);
+
+			if ((predictedPosition.x > chunk->blocks[i].cubeCenter.x - 0.5f) && (predictedPosition.x < chunk->blocks[i].cubeCenter.x + 0.5f))
+			{
+				validPosX = false;
+			}
+			if ((predictedPosition.y > chunk->blocks[i].cubeCenter.y - 0.5f) && (predictedPosition.y < chunk->blocks[i].cubeCenter.y + 0.5f))
+			{
+				validPosY = false;
+			}
+			if ((predictedPosition.z > chunk->blocks[i].cubeCenter.z - 0.5f) && (predictedPosition.z < chunk->blocks[i].cubeCenter.z + 0.5f))
+			{
+				validPosZ = false;
+			}
+
+			if (!validPosX && !validPosY && !validPosZ)
+			{
+				validPos = false;
+			}
+
+			if ((cameraPos.x + cameraSpeed * cameraFront.x > chunk->blocks[i].cubeCenter.x - 0.5f) && (cameraPos.x + cameraSpeed * cameraFront.x < chunk->blocks[i].cubeCenter.x + 0.5f))
+			{
+				x = 0;
+			}
+			if ((cameraPos.y + cameraSpeed * cameraFront.y > chunk->blocks[i].cubeCenter.y - 0.5f) && (cameraPos.y + cameraSpeed * cameraFront.y < chunk->blocks[i].cubeCenter.y + 0.5f))
+			{
+				y = 0;
+			}
+			if ((cameraPos.z + cameraSpeed * cameraFront.z > chunk->blocks[i].cubeCenter.z - 0.5f) && (cameraPos.z + cameraSpeed * cameraFront.z < chunk->blocks[i].cubeCenter.z + 0.5f))
+			{
+				z = 0;
+			}
+
+		}
+		if (!validPos)
+		{
+			cameraPos += cameraSpeed * glm::vec3(cameraFront.x*x, cameraFront.y*y, cameraFront.z*z);
+			break;
+		}
+		else {
+			cameraPos += cameraSpeed * glm::vec3(cameraFront.x, cameraFront.y, cameraFront.z);
+			break;
+		}
+	}
+
+
+
+
+
+
+
+
+	if (!validPos)
+			{
+				if (
+					(cameraPos.x + 0.01f > chunk->blocks[i].cubeCenter.x - 0.5f && cameraPos.x + 0.01f < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+					(cameraPos.y > chunk->blocks[i].cubeCenter.y - 0.5f && cameraPos.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+					(cameraPos.z > chunk->blocks[i].cubeCenter.z - 0.5f && cameraPos.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+					)
+				{
+					x = 0;
+				}
+				if (
+					(cameraPos.x > chunk->blocks[i].cubeCenter.x - 0.5f && cameraPos.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+					(cameraPos.y + 0.01f > chunk->blocks[i].cubeCenter.y - 0.5f && cameraPos.y + 0.01f < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+					(cameraPos.z > chunk->blocks[i].cubeCenter.z - 0.5f && cameraPos.z < chunk->blocks[i].cubeCenter.z + 0.5f)
+					)
+				{
+					y = 0;
+				}
+				if (
+					(cameraPos.x > chunk->blocks[i].cubeCenter.x - 0.5f && cameraPos.x < chunk->blocks[i].cubeCenter.x + 0.5f) &&
+					(cameraPos.y > chunk->blocks[i].cubeCenter.y - 0.5f && cameraPos.y < chunk->blocks[i].cubeCenter.y + 0.5f) &&
+					(cameraPos.z + 0.01f > chunk->blocks[i].cubeCenter.z - 0.5f && cameraPos.z + 0.01f < chunk->blocks[i].cubeCenter.z + 0.5f)
+					)
+				{
+					z = 0;
+				}
+			}
+
+
+
+
+
+
+
+
+
+			std::cout << collisionIndex<<"\n";
+			float distanceX = cameraPos.x - chunk->blocks[collisionIndex].cubeCenter.x;
+			float distanceY = cameraPos.y - chunk->blocks[collisionIndex].cubeCenter.y;
+			float distanceZ = cameraPos.z - chunk->blocks[collisionIndex].cubeCenter.z;
+
+			if (distanceX > distanceY && distanceX > distanceZ)
+			{
+				x = 0;
+			}
+			else if (distanceY > distanceZ && distanceY > distanceX)
+			{
+				y = 0;
+			}
+			else if(distanceZ > distanceX && distanceZ > distanceY){
+				z = 0;
+			}
+
+
+
+
+			if (i < 16*16)
+			{
+
+
+				
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+
+
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+
+
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+
+
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+
+
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+
+
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(1.0f); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16); vertices.push_back(0.0f); vertices.push_back(0.0f); vertices.push_back(1.0f);
+
+			}
+			if (i < 16 * 16*128)
+			{
+				
+
+
+							// Front face
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+
+							// Back face
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+
+							// Left face
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+
+							// Right face
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+
+							// Bottom face
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(0.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+
+							// Top face
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(1.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(1.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(1.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(1.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(0.0f);
+							vertices.push_back(0.0f + i % 16); vertices.push_back(1.0f + i / 16 * 16); vertices.push_back(0.0f + (i / 16) % 16); vertices.push_back(0.0f); vertices.push_back(1.0f);
+
+			}
+
+
+
+
+			for (int i = 0; i < vertices.size();i++)
+		{
+			std::cout << vertices[i] << " to wiercholek nr " << i << "\n";
+	
+	}
+
+
+	glm::vec3 posPrediction;
+			posPrediction = cameraPos + cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
+			if (posPrediction.x >= -0.5f)
+			{
+				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+				break;
+			}
+			else {
+				cameraPos += cameraSpeed * glm::vec3(cameraFront.x,0,cameraFront.z);
+				break;
+			}

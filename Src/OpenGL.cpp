@@ -38,21 +38,20 @@ int vert = 15;
 int dept = 0;
 
 //Stałe
-const float SCR_WDTH = 2560.0f;
-const float SCR_HGHT = 1440.0f;
+const float SCR_WDTH = 1280.0f;
+const float SCR_HGHT = 720.0f;
 
 //macierze
 glm::mat4 view = glm::mat4(1.0f);
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 projection = glm::mat4(1.0f);
 
-// obiekty
-Camera camera{};
+
 
 //wskazniki
 Vao* vaoptr{};
 Chunk* chunkptr{};
-
+Camera* cameraptr{};
 
 
 int main() {
@@ -72,7 +71,7 @@ int main() {
 
 
     Shader shader{ "C:/Users/Franek/source/repos/OpenGL/Shaders Code/vertexShader.txt","C:/Users/Franek/source/repos/OpenGL/Shaders Code/fragmentShader.txt"};
-    Texture texture{ "C:/Users/Franek/source/repos/OpenGL/Assets/cobblestone.jpg" };
+    Texture texture{ "C:/Users/Franek/source/repos/OpenGL/Assets/texture.jpg" };
     ChunkLoader loader{};
     UniformBuffer ubo{2,0,0};
     loader.genChunk(hori,vert,dept);
@@ -80,7 +79,8 @@ int main() {
     chunk.generateVerticesOfChunk();
     chunkptr = &chunk;
     
-    
+    Camera camera{};
+	cameraptr = &camera;
 
     Vao vao1{ chunk.vertices};
     vaoptr = &vao1;
@@ -138,7 +138,7 @@ int main() {
         vao1.bindVAO();
         glDrawArrays(GL_TRIANGLES, 0,chunk.vertices.size()/5);
 
-        std::cout << "Kamera jest w pozycji X:" << camera.getCameraPos().x << " Y: " << camera.getCameraPos().y << " Z: " << camera.getCameraPos().z << "\n";
+        //std::cout << "Kamera jest w pozycji X:" << camera.getCameraPos().x << " Y: " << camera.getCameraPos().y << " Z: " << camera.getCameraPos().z << "\n";
         //zakoncznie petli
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -174,35 +174,35 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {        
-        camera.updateVectorKey(Camera::W,chunkptr);           
+        cameraptr->updateVectorKey(Camera::W,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::S,chunkptr);
+        cameraptr->updateVectorKey(Camera::S,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::A,chunkptr);
+        cameraptr->updateVectorKey(Camera::A,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::D,chunkptr);
+        cameraptr->updateVectorKey(Camera::D,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::SPACE,chunkptr);
+        cameraptr->updateVectorKey(Camera::SPACE,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::LSHIFT,chunkptr);
+        cameraptr->updateVectorKey(Camera::LSHIFT,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::KEY_2,chunkptr);
+        cameraptr->updateVectorKey(Camera::KEY_2,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
     {
-        camera.updateVectorKey(Camera::KEY_3,chunkptr);
+        cameraptr->updateVectorKey(Camera::KEY_3,chunkptr);
     }
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
     {
@@ -220,7 +220,7 @@ void processInput(GLFWwindow* window)
 //KAMERA
 static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    camera.updateVectorMouse(xpos, ypos);
+    cameraptr->updateVectorMouse(xpos, ypos);
 }
 
 //Ustawianie hintów okna
@@ -266,14 +266,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-        chunkptr->removeTargetBlock(camera.getCameraPos(), camera.getCameraFront());
+        chunkptr->removeTargetBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront());
         chunkptr->generateVerticesOfChunk();
         (*vaoptr).bindVBO();
         glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
     }
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
     {
-        chunkptr->addBlock(camera.getCameraPos(), camera.getCameraFront());
+        chunkptr->addBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront());
         chunkptr->generateVerticesOfChunk();
         (*vaoptr).bindVBO();
         glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
