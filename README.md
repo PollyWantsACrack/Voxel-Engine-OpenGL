@@ -9,6 +9,7 @@ A) Running features:
   - Moving around the scene along all axes with adjustable movement speed
   - Dynamic camera that can be rotated along all axes.
   - Switching between mesh mode and solid mode
+  - collision with blocks
 
 B) Background features:
   - Optimization by not rendering blocks that are surrounded on all sides by other blocks.
