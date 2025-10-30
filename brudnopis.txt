@@ -1,11 +1,13 @@
-﻿	z czym zbyt długo mi zajmowało i wykorzytaslem AI:
+﻿	z czym zbyt długo mi zajmowało i wykorzytaslem AI (wsyzskot co stamtąd wziąłem jest dokłądnie opisane):
 
 	1. odszyforwnaie pozychj bloku na podstaiwe tablicy 1d :
 	blocks[x + (y+1)*16 * 16 + z*16].blockType == 1
 	2. dlaczego szescina pomimo nacisnieca usuwnaia i pomimo posiadnaia typu 0 wciaz sie genrował :
-	zamiana z : glbuffersubdata...(wina lezala w tym ze wierhcolki s e nie w peolni aktualizowaly ) na glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
+	zamiana z : glbuffersubdata...(wina lezala w tym ze wierhcolki sie nie w peolni aktualizowaly ) na glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
 	3. dlaczego kiedy bylen na szczycie kolumny i chcialem tam postawic blok to sie nie stawiał:
 	przeniesieni generownai srodkow szescianu na poczatek petli generate vertices -- nie dlao sie stawiac poniewaz szesciany z warotscia 0 byly z gory pomijane przze progrma wiec ich srodki nie zostaly wygenerownae
-	4. Bład undefined type class chunk: #include "Chunk.h"
+	4. Bład undefined type class chunk: #include "Chunk.h": bład poprawneo includa klasy
+	5. Zrobiłm kolizje ale nie dizalalo sliszganie w blokach wpisalem jakie są sposoby i skorzysalem z sugest sprawdznia aoddzielnie kazdej osi oraz spojrzalem na inne roziwaznie wykorzystujace te wslasnie sprawdzenie roznych osi , oraz aby po zbalokowaniu sue dalo sie odkleic (10/10/2025) Na razie mam sam chunk blokow nie ma za duzo sta jak na wideo na githubie
 
+	
 

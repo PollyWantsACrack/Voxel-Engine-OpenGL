@@ -14,6 +14,10 @@
 #include <vector>
 #include "UniformBuffer.h"
 #include "Chunk.h"
+#include "PhysicsEngine.h"
+#include "Player.h"
+#include "CrossHair.h"
+
 
 //forward deklaracje funckji
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -37,6 +41,8 @@ int hori = 16;
 int vert = 15;
 int dept = 0;
 
+int frames = 0;
+int seconds = 0;
 //Stałe
 const float SCR_WDTH = 1280.0f;
 const float SCR_HGHT = 720.0f;
@@ -46,12 +52,16 @@ glm::mat4 view = glm::mat4(1.0f);
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 projection = glm::mat4(1.0f);
 
-
+//zmienne luźne
+float velocity = 0.00f;
+int type = 1;
 
 //wskazniki
 Vao* vaoptr{};
 Chunk* chunkptr{};
 Camera* cameraptr{};
+PhysicsEngine* physicsEngineptr{};
+Player* playerptr{};
 
 
 int main() {
@@ -71,7 +81,9 @@ int main() {
 
 
     Shader shader{ "C:/Users/Franek/source/repos/OpenGL/Shaders Code/vertexShader.txt","C:/Users/Franek/source/repos/OpenGL/Shaders Code/fragmentShader.txt"};
-    Texture texture{ "C:/Users/Franek/source/repos/OpenGL/Assets/texture.jpg" };
+    Shader shaderCrossHair{ "C:/Users/Franek/source/repos/OpenGL/Shaders Code/crossHairVShader.txt","C:/Users/Franek/source/repos/OpenGL/Shaders Code/crossHairFShader.txt" };
+    Texture texture{ "C:/Users/Franek/source/repos/OpenGL/Assets/cobblestone.jpg" };
+    Texture textureAtlas{ "C:/Users/Franek/source/repos/OpenGL/Assets/textureAtlas.png" };
     ChunkLoader loader{};
     UniformBuffer ubo{2,0,0};
     loader.genChunk(hori,vert,dept);
@@ -82,11 +94,19 @@ int main() {
     Camera camera{};
 	cameraptr = &camera;
 
+    PhysicsEngine physicsEngine{};
+    physicsEngineptr = &physicsEngine;
     Vao vao1{ chunk.vertices};
     vaoptr = &vao1;
     vao1.setVertexAttribPointer(0, 3, 5, 0);
     vao1.setVertexAttribPointer(1, 2, 5, 3);
+    CrossHair crosshairVertices{};
 
+    Vao crossHairVAO{crosshairVertices.getVertices()};
+    crossHairVAO.setVertexAttribPointer(0, 3, 3, 0);
+
+    Player player{cameraptr};
+    playerptr = &player;
     
     
     
@@ -99,8 +119,12 @@ int main() {
     
     while (!glfwWindowShouldClose(window))
     {
-        
+
+        physicsEngine.updateTime(glfwGetTime());
+        physicsEngine.jump(playerptr,cameraptr,chunkptr);
         //obliczniea czasu
+        physicsEngine.isPlayerOnGround(cameraptr, chunkptr, playerptr);
+        physicsEngine.applyGravity(playerptr);
         currentTime = glfwGetTime();
         deltaTime = currentTime - lastTime;
         if (deltaTime <= waitTime)
@@ -119,6 +143,10 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //Rysowanie
+        glDepthFunc(GL_LESS);
+        
+
+
         shader.useShader();    
         shader.uniformBufferBinding("Matrices",0);
 
@@ -130,13 +158,19 @@ int main() {
         
 
         glActiveTexture(GL_TEXTURE0);
-        texture.bindTexture();
+        textureAtlas.bindTexture();
         shader.setIntUniform("textureWall", 0);
         shader.setMatrixUniform("model", model);
         shader.setMatrixUniform("view", view);
         shader.setMatrixUniform("projection", projection);
         vao1.bindVAO();
         glDrawArrays(GL_TRIANGLES, 0,chunk.vertices.size()/5);
+
+        glDepthFunc(GL_ALWAYS);
+        shaderCrossHair.useShader();
+        crossHairVAO.bindVAO();
+        glDrawArrays(GL_TRIANGLES, 0, 12);
+        
 
         //std::cout << "Kamera jest w pozycji X:" << camera.getCameraPos().x << " Y: " << camera.getCameraPos().y << " Z: " << camera.getCameraPos().z << "\n";
         //zakoncznie petli
@@ -174,35 +208,37 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {        
-        cameraptr->updateVectorKey(Camera::W,chunkptr);
+        glm::vec3 axis = physicsEngineptr->checkCollision(cameraptr,chunkptr,physicsEngineptr->getDir('W'));
+        cameraptr->updateVectorKey(Camera::W,chunkptr,axis);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::S,chunkptr);
+        glm::vec3 axis = physicsEngineptr->checkCollision(cameraptr, chunkptr, physicsEngineptr->getDir('S'));
+        cameraptr->updateVectorKey(Camera::S,chunkptr,axis);
     }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    /*if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::A,chunkptr);
+        cameraptr->updateVectorKey(Camera::A,chunkptr, glm::vec3{});
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::D,chunkptr);
-    }
+        cameraptr->updateVectorKey(Camera::D,chunkptr, glm::vec3{});
+    }*/
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::SPACE,chunkptr);
+        physicsEngineptr->startJump();
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    /*if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::LSHIFT,chunkptr);
-    }
+        cameraptr->updateVectorKey(Camera::LSHIFT,chunkptr, glm::vec3{});
+    }*/
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::KEY_2,chunkptr);
+        cameraptr->updateVectorKey(Camera::KEY_2,chunkptr, glm::vec3{});
     }
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
     {
-        cameraptr->updateVectorKey(Camera::KEY_3,chunkptr);
+        cameraptr->updateVectorKey(Camera::KEY_3,chunkptr, glm::vec3{});
     }
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
     {
@@ -211,6 +247,14 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
     {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+    {
+        type = 2;
+    }
+    if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
+    {
+        type = 4;
     }
     
     
@@ -266,17 +310,18 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-        chunkptr->removeTargetBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront());
+        playerptr->removeBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront(), chunkptr);
         chunkptr->generateVerticesOfChunk();
         (*vaoptr).bindVBO();
         glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
     }
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
     {
-        chunkptr->addBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront());
+        playerptr->addBlock(cameraptr->getCameraPos(), cameraptr->getCameraFront(), chunkptr,type);
         chunkptr->generateVerticesOfChunk();
         (*vaoptr).bindVBO();
         glBufferData(GL_ARRAY_BUFFER, chunkptr->vertices.size() * sizeof(float), chunkptr->vertices.data(), GL_DYNAMIC_DRAW);
     }
         
 }
+

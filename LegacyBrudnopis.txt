@@ -1,60 +1,3 @@
-	void updateVectorKey(KeyDirection dir, Chunk* chunk)
-	{
-		SKONCYELM TU Z JAKIMIS DZIENWYMI BLEDAMI
-		switch (dir)
-		{
-		case W:
-		{
-			bool validPos = true;
-			for (int i = 0; i < chunk->blocks.size(); i++)
-			{
-
-
-
-				if (
-					(chunk->blocks[i].cubeCenter.x - 0.5f > cameraPos.x && chunk->blocks[i].cubeCenter.x + 0.5f < cameraPos.x) &&
-					(chunk->blocks[i].cubeCenter.y - 0.5f > cameraPos.y && chunk->blocks[i].cubeCenter.y + 0.5f < cameraPos.y) &&
-					(chunk->blocks[i].cubeCenter.z - 0.5f > cameraPos.z && chunk->blocks[i].cubeCenter.z + 0.5f < cameraPos.z)
-					)
-				{
-					validPos = false;
-				}
-				
-
-			}
-			if (!validPos)
-			{
-				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
-				break;
-			}
-			else {
-				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
-				break;
-			}
-		}
-			
-
-
-
-
-
-
-			case W:
-			if ((cameraPos+ cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z)).x < 0)
-			{
-				cameraPos += cameraSpeed * glm::vec3(0, 0, cameraFront.z);
-				break;
-			}
-			else {
-				cameraPos += cameraSpeed * glm::vec3(cameraFront.x, 0, cameraFront.z);
-				break;
-			}		
-
-
-
-
-
-
 
 
 
@@ -395,3 +338,201 @@
 				cameraPos += cameraSpeed * glm::vec3(cameraFront.x,0,cameraFront.z);
 				break;
 			}
+
+
+
+
+
+
+			
+	void Chunk::addBlock(glm::vec3 cameraPos, glm::vec3 cameraFront)
+{
+	std::vector<int> possibleIndices{};
+	bool firstSolidFound = false;
+	float offset = 0.1;
+	glm::vec3 nextCheckPos{};
+
+	for (int y = 0; y < 1000; y++)
+	{
+		if (firstSolidFound)
+		{
+			break;
+		}
+		offset = offset + 0.1f;
+		nextCheckPos = cameraPos + cameraFront * offset;
+		for (int i = 0; i < blocks.size(); i++)
+		{
+
+
+
+			if (
+				(blocks[i].cubeCenter.x - 0.5f < nextCheckPos.x && blocks[i].cubeCenter.x + 0.5f > nextCheckPos.x) &&
+				(blocks[i].cubeCenter.y - 0.5f < nextCheckPos.y && blocks[i].cubeCenter.y + 0.5f > nextCheckPos.y) &&
+				(blocks[i].cubeCenter.z - 0.5f < nextCheckPos.z && blocks[i].cubeCenter.z + 0.5f > nextCheckPos.z) 
+				)
+			{
+				
+				possibleIndices.push_back(i);
+				if (blocks[i].blockType == 1)
+				{
+					firstSolidFound = true;
+					break;
+				}
+
+			}
+
+		}
+
+
+
+
+	}
+	int length = possibleIndices.size();
+	if (length-2 > -1)
+	{
+		std::cout << "changing block with type" << blocks[possibleIndices[possibleIndices.size() - 2]].blockType << " to type 1 ";
+		blocks[possibleIndices[possibleIndices.size() - 2]].blockType = 1;
+	}
+		
+		
+	
+	
+}
+
+
+
+
+void PhysicsEngine::jump(Player* player, Camera* camera, Chunk* chunk) {
+	bool subtracted = false;
+	if (playerDuringJump)
+	{
+		elapsedTime = currentTime - lastTime;
+		if (currentTime - lastTime < 0.25f)
+		{
+			float offset = -8 * (elapsedTime - 0) * (elapsedTime - 1.3);
+			
+
+
+
+				glm::vec3 predictedPositionY = camera->getCameraPos();
+				predictedPositionY.y = camera->getCameraPos().y - camera->getCameraSpeed() - 1.51f;
+
+				for (int i = 0; i < chunk->getChunkSize(); i++)
+				{
+					if (chunk->getBlockType(i) == 0)
+					{
+						continue;
+					}
+					if (
+						(predictedPositionY.x > chunk->getBlockCenter(i).x - 0.65f && predictedPositionY.x < chunk->getBlockCenter(i).x + 0.65f) &&
+						(predictedPositionY.y > chunk->getBlockCenter(i).y - 0.5f && predictedPositionY.y < chunk->getBlockCenter(i).y + 0.5f) &&
+						(predictedPositionY.z > chunk->getBlockCenter(i).z - 0.65f && predictedPositionY.z < chunk->getBlockCenter(i).z + 0.65f)
+						)
+					{
+						playerOnGround = true;
+						break;
+					}
+					else 
+					{
+						if (!subtracted)
+						{
+							player->addToPlayerPos(glm::vec3(0.0f, offset / 240, 0.0f));
+							subtracted = true;
+						}
+						else if (subtracted)
+						{
+							break;
+						}
+						
+						
+					
+					}				
+				}
+			jumpProcesStarted = true;
+			
+		}
+		else {
+			playerDuringJump = false;
+			lastTime = 0.0f;
+			elapsedTime = 0.0f;
+		}
+	}	
+}
+
+
+void PhysicsEngine::jump(Player* player, Camera* camera, Chunk* chunk) {
+	bool subtracted = false;
+	if (playerDuringJump)
+	{
+		elapsedTime = currentTime - lastTime;
+		if (currentTime - lastTime < 1)
+		{
+			float offset = -4 * (elapsedTime - 0) * (elapsedTime - 1);
+			if (elapsedTime > 0.5f)
+			{
+				player->substractFromPlayerPos(glm::vec3(0.0f, offset/60, 0.0f));
+				std::cout << "Substracting: " << offset<<"\n";
+			}
+			else if (elapsedTime <= 0.5f)
+			{
+
+
+
+
+
+
+
+
+
+				glm::vec3 predictedPositionY = camera->getCameraPos();
+				predictedPositionY.y = camera->getCameraPos().y - camera->getCameraSpeed() - 1.51f;
+
+				for (int i = 0; i < chunk->getChunkSize(); i++)
+				{
+					if (chunk->getBlockType(i) == 0)
+					{
+						continue;
+					}
+					if (
+						(predictedPositionY.x > chunk->getBlockCenter(i).x - 0.65f && predictedPositionY.x < chunk->getBlockCenter(i).x + 0.65f) &&
+						(predictedPositionY.y > chunk->getBlockCenter(i).y - 0.5f && predictedPositionY.y < chunk->getBlockCenter(i).y + 0.5f) &&
+						(predictedPositionY.z > chunk->getBlockCenter(i).z - 0.65f && predictedPositionY.z < chunk->getBlockCenter(i).z + 0.65f)
+						)
+					{
+						playerOnGround = true;
+						break;
+					}
+					else {
+						if (!subtracted)
+						{
+							player->addToPlayerPos(glm::vec3(0.0f, offset / 60, 0.0f));
+							subtracted = true;
+						}
+						else if (subtracted)
+						{
+							break;
+						}
+						
+						
+					}
+				}
+
+
+
+
+
+
+				
+			}
+			jumpProcesStarted = true;
+			
+		}
+		else {
+			playerDuringJump = false;
+			lastTime = 0.0f;
+			elapsedTime = 0.0f;
+			jumpProcesStarted = false;
+			std::cout << "NOT JUM<PING\n";
+		}
+	}	
+}

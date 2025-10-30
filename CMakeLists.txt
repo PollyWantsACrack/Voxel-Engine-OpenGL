@@ -21,7 +21,7 @@ add_executable (OpenGL
 "Header Files/Camera.h"
 "Header Files/Texture.h"
 "Header Files/stb_image.h"
- "Header Files/Vao.h" "Header Files/UniformBuffer.h" "Header Files/ChunkLoader.h" "Header Files/Block.h" "Header Files/Chunk.h")
+ "Header Files/Vao.h" "Header Files/UniformBuffer.h" "Header Files/ChunkLoader.h" "Header Files/Block.h" "Header Files/Chunk.h" "Header Files/PhysicsEngine.h" "Header Files/Player.h" "Header Files/Crosshair.h")
 
 
 include_directories("${CMAKE_SOURCE_DIR}/Header Files")

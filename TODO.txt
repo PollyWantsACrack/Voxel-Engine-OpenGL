@@ -1,0 +1,253 @@
+Na przyslzopsc:
+Zrobic od nowa kolizje systemem AABB atulanie jest oriblem korego nie rozunmem
+zmienic spsob genrona wierhcolkow podczs ddoawnia boku
+
+Na teraz
+dodac crosshair
+dodac generonaie swiata
+dodac teksturownaia
+dodac toolbar
+
+
+void Camera::updateVectorKey(KeyDirection dir, Chunk* chunk,glm::vec3 axis)
+{
+	switch (dir)
+	{
+
+	case W:
+	{
+		glm::vec3 newPos = cameraPos;
+		glm::vec3 normalizedCameraFront;
+		normalizedCameraFront = cameraFront;
+		normalizedCameraFront.y = 0.0f;
+		float magnitude = glm::sqrt((normalizedCameraFront.x * normalizedCameraFront.x) + (normalizedCameraFront.y * normalizedCameraFront.y) + (normalizedCameraFront.z * normalizedCameraFront.z));
+		normalizedCameraFront.x = normalizedCameraFront.x / magnitude;
+		normalizedCameraFront.y = normalizedCameraFront.y / magnitude;
+		normalizedCameraFront.z = normalizedCameraFront.z / magnitude;
+
+		glm::vec3 predictedPositionX = cameraPos + cameraSpeed * glm::vec3(normalizedCameraFront.x, 0, 0);
+		glm::vec3 predictedPositionY = cameraPos + cameraSpeed * glm::vec3(0, normalizedCameraFront.y, 0);
+		glm::vec3 predictedPositionZ = cameraPos + cameraSpeed * glm::vec3(0, 0, normalizedCameraFront.z);
+
+		if (axis.x != 0)
+		{
+			newPos.x = predictedPositionX.x;
+		}
+		if (axis.y != 0)
+		{
+			newPos.y = cameraPos.y;
+		}
+		if (axis.z != 0)
+		{
+			newPos.z = predictedPositionZ.z;
+		}
+
+		cameraPos = newPos;
+		break;
+		
+	}
+
+	case S:
+	{
+		glm::vec3 newPos = cameraPos;
+		glm::vec3 normalizedCameraFront;
+		normalizedCameraFront = cameraFront;
+		normalizedCameraFront.y = 0.0f;
+		glm::normalize(normalizedCameraFront);
+		glm::vec3 predictedPositionX = cameraPos - cameraSpeed * glm::vec3(cameraFront.x, 0, 0);
+		glm::vec3 predictedPositionY = cameraPos - cameraSpeed * glm::vec3(0, cameraFront.y, 0);
+		glm::vec3 predictedPositionZ = cameraPos - cameraSpeed * glm::vec3(0, 0, cameraFront.z);
+
+		if (axis.x != 0)
+		{
+			newPos.x = predictedPositionX.x;
+		}
+		if (axis.y != 0)
+		{
+			newPos.y = cameraPos.y;
+		}
+		if (axis.z != 0)
+		{
+			newPos.z = predictedPositionZ.z;
+		}
+
+		cameraPos = newPos;
+		break;
+
+	}
+	case A:
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * -cameraSpeed;
+		break;
+	case D:
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		break;
+	case SPACE:
+		cameraPos += cameraSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
+		break;
+	case LSHIFT:
+		cameraPos -= cameraSpeed * glm::vec3(0.0f, 1.0f, 0.0f);
+		break;
+	case KEY_2:
+		cameraSpeed *= 1.1;
+		break;
+	case KEY_3:
+		cameraSpeed /= 1.1;
+		break;
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void processInput(GLFWwindow* window)
+{
+ 
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, true);
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {        
+        glm::vec3 axis = physicsEngineptr->checkCollision(cameraptr,chunkptr,physicsEngineptr->getDir('W'));
+        cameraptr->updateVectorKey(Camera::W,chunkptr,axis);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        glm::vec3 axis = physicsEngineptr->checkCollision(cameraptr, chunkptr, physicsEngineptr->getDir('S'));
+        cameraptr->updateVectorKey(Camera::S,chunkptr,axis);
+    }
+    /*if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        cameraptr->updateVectorKey(Camera::A,chunkptr, glm::vec3{});
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        cameraptr->updateVectorKey(Camera::D,chunkptr, glm::vec3{});
+    }*/
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        physicsEngineptr->startJump();
+    }
+    /*if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    {
+        cameraptr->updateVectorKey(Camera::LSHIFT,chunkptr, glm::vec3{});
+    }*/
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+    {
+        cameraptr->updateVectorKey(Camera::KEY_2,chunkptr, glm::vec3{});
+    }
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+    {
+        cameraptr->updateVectorKey(Camera::KEY_3,chunkptr, glm::vec3{});
+    }
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }    
+}
+
+
+
+
+
+
+
+
+
+
+
+glm::vec3 PhysicsEngine::checkCollision(Camera* camera, Chunk* chunk, KeyDirection dir)
+{
+	glm::vec3 result{ 0.0f,0.0f,0.0f };
+	glm::vec3 predictedPositionX;
+	glm::vec3 predictedPositionY;
+	glm::vec3 predictedPositionZ;
+	float speed = camera->getCameraSpeed();
+	if (dir == W)
+	{
+		predictedPositionX = camera->getCameraPos() + speed * glm::vec3(camera->getCameraFront().x, 0, 0);
+		predictedPositionY = camera->getCameraPos() + speed * glm::vec3(0, camera->getCameraFront().y, 0);
+		predictedPositionZ = camera->getCameraPos() + speed * glm::vec3(0, 0, camera->getCameraFront().z);
+	}
+	else if (dir == S)
+	{
+		predictedPositionX = camera->getCameraPos() - speed * glm::vec3(camera->getCameraFront().x, 0, 0);
+		predictedPositionY = camera->getCameraPos() - speed * glm::vec3(0, camera->getCameraFront().y, 0);
+		predictedPositionZ = camera->getCameraPos() - speed * glm::vec3(0, 0, camera->getCameraFront().z);
+	}
+
+	bool collisionX = false;
+	bool collisionY = false;
+	bool collisionZ = false;
+	for (int i = 0; i < chunk->getChunkSize(); i++)
+	{
+		if (chunk->getBlockType(i) == 0)
+		{
+			continue;
+		}
+
+
+		if (
+			(predictedPositionX.x > chunk->getBlockCenter(i).x - 0.65f && predictedPositionX.x < chunk->getBlockCenter(i).x + 0.65f) &&
+			(predictedPositionX.y > chunk->getBlockCenter(i).y - 0.5f && predictedPositionX.y < chunk->getBlockCenter(i).y + 0.5f + 1.5f) &&
+			(predictedPositionX.z > chunk->getBlockCenter(i).z - 0.65f && predictedPositionX.z < chunk->getBlockCenter(i).z + 0.65f)
+			)
+		{
+			collisionX = true;
+			std::cout << "collision X\n";
+			result = glm::vec3{ 0.0f,0.0f,0.0f };
+		}
+		else if (!collisionX) {
+			result.x = 1.0f;
+
+		}
+		if (
+			(predictedPositionY.x > chunk->getBlockCenter(i).x - 0.65f && predictedPositionY.x < chunk->getBlockCenter(i).x + 0.65f) &&
+			(predictedPositionY.y > chunk->getBlockCenter(i).y - 0.5f && predictedPositionY.y < chunk->getBlockCenter(i).y + 0.5f + 1.5f) &&
+			(predictedPositionY.z > chunk->getBlockCenter(i).z - 0.65f && predictedPositionY.z < chunk->getBlockCenter(i).z + 0.65f)
+			)
+		{
+			collisionY = true;
+			std::cout << "collision Y\n";
+			result = glm::vec3{ 0.0f,0.0f,0.0f };
+		}
+		else if (!collisionY) {
+			result.y = 1.0f;
+
+		}
+		if (
+			(predictedPositionZ.x > chunk->getBlockCenter(i).x - 0.65f && predictedPositionZ.x < chunk->getBlockCenter(i).x + 0.65f) &&
+			(predictedPositionZ.y > chunk->getBlockCenter(i).y - 0.5f && predictedPositionZ.y < chunk->getBlockCenter(i).y + 0.5f + 1.5f) &&
+			(predictedPositionZ.z > chunk->getBlockCenter(i).z - 0.65f && predictedPositionZ.z < chunk->getBlockCenter(i).z + 0.65f)
+			)
+		{
+			collisionZ = true;
+			std::cout << "collision Z\n";
+			result = glm::vec3{ 0.0f,0.0f,0.0f };
+		}
+		else if (!collisionZ) {
+			result.z = 1.0f;
+
+		}
+
+	}
+
+	return result;
+}
