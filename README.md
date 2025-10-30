@@ -10,6 +10,10 @@ A) Running features:
   - Dynamic camera that can be rotated along all axes.
   - Switching between mesh mode and solid mode
   - Collision with blocks
+  - Diffrent texture blocks
+  - Changing block type in real time
+  - jumping
+  - gravity
 
 B) Background features:
   - Optimization by not rendering blocks that are surrounded on all sides by other blocks.
